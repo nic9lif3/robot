@@ -2,10 +2,42 @@ from generate import maze
 import numpy as np
 
 
-start=np.argwhere(maze==2)[0]
+pos=np.argwhere(maze==2)[0]
 end=np.argwhere(maze==3)[0]
 treasure=np.argwhere(maze==4)
 
-direction=np.array([0,0])
-direction[np.random.choice(2,1)]=np.random.choice([-1,1],1)
-print(direction)
+direction=[0,1]
+
+def left():
+	if direction==[0,-1]:
+		return [-1,0]
+	if direction==[-1,0]:
+		return [0,1]
+	if direction==[0,1]:
+		return [1,0]
+	if direction==[1,0]:
+		return [0,-1]
+
+def right():
+	if direction==[0,-1]:
+		return [1,0]
+	if direction==[1,0]:
+		return [0,1]
+	if direction==[0,1]:
+		return [-1,0]
+	if direction==[-1,0]:
+		return [0,-1]	
+
+def back_to_check_point(road):
+	way='ll'
+	for i in road[::-1]:
+		if i=='g':
+			way+='g';
+		if i=='l':
+			way+='r'
+		if i=='r':
+			way+=l
+	return way
+
+
+
