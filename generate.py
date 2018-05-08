@@ -11,13 +11,14 @@ def generate():
 	maze[10,:]=-1
 	maze[:,0]=-1
 	maze[:,10]=-1
-	# chon diem bat dau
 	start=np.random.choice(range(1,10,2),[4,2])
-	maze[start[0][0]][start[0][1]]=2
+	
 	#chon kho bau:
 	maze[start[1][0]][start[1][1]]=4
 	maze[start[2][0]][start[2][1]]=4
 	maze[start[3][0]][start[3][1]]=4
+	# chon diem bat dau
+	maze[start[0][0]][start[0][1]]=2
 	# chon diem ket thuc
 	end=np.zeros(2)
 	end=np.random.choice([0,1,3,5,7,9,10],2)
@@ -85,4 +86,3 @@ while True:
 	if test(maze):
 		break
 show(maze)
-np.save('maze', maze)
