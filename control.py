@@ -1,5 +1,6 @@
 from generate import maze, show
 import numpy as np
+import time
 
 
 # ham xac dinh toa do ben trai
@@ -30,69 +31,55 @@ def right():
 def back():
     if all(direction == [-1, 0]):
         return np.array([1, 0])
-    if all(direction == [0, 1]):
-        return np.array([0, -1])
     if all(direction == [1, 0]):
         return np.array([-1, 0])
+    if all(direction == [0, -1]):
+        return np.array([0, 1])
     if all(direction == [0, 1]):
         return np.array([0, -1])
 
 
 # ham de tao ra con duong di nguoc lai dua tren con duong da co
 def come_back(road):
-    way = 'll'
-    for i in road[::-1]:
-        if i == 'f':
-            way += 'f';
-        if i == 'l':
-            way += 'r'
-        if i == 'r':
-            way += 'l'
-    return way
+    way = 'll'+road[::-1]
+    # for i in road[::-1]:
+    #     if i == 'f':
+    #         way += 'f';
+    #     if i == 'l':
+    #         way += 'r'
+    #     if i == 'r':
+    #         way += 'l'
+    return  'll'+road[::-1]
 
 
 # cap nhat gia tri maze cho tmp_maze
 def update_maze_to_tmp_maze():
     global tmp_maze
     tmp_maze[pos[0]][pos[1]] = '0'
-    if 
+    if pos[0] + direction[0] != 0 and pos[0] + direction[0] != 10 and pos[1] + direction[1] != 0 and pos[1] + direction[1] != 10:
         tmp_maze[pos[0] + direction[0] * 2][pos[1] + direction[1] * 2] = 0
-    except:
-        pass
-    try:
+    if pos[0] + left()[0] != 0 and pos[0] + left()[0] != 10 and pos[1] + left()[1] != 0 and pos[1] + left()[1] != 10:
         tmp_maze[pos[0] + left()[0] * 2][pos[1] + left()[1] * 2] = 0
-    except:
-        pass
-    try:
+    if pos[0] + right()[0] != 0 and pos[0] + right()[0] != 10 and pos[1] + right()[1] != 0 and pos[1] + right()[1] != 10:
         tmp_maze[pos[0] + right()[0] * 2][pos[1] + right()[1] * 2] = 0
-    except:
-        pass
-    try:
+    if pos[0] + back()[0] != 0 and pos[0] + back()[0] != 10 and pos[1] + back()[1] != 0 and pos[1] + back()[1] != 10:
         tmp_maze[pos[0] + back()[0] * 2][pos[1] + back()[1] * 2] = 0
-    except:
-        pass
+
 
 # cap nhat gia tri moi cho tmp_maze
 def update_tmp_maze():
     global tmp_maze
     tmp_maze[pos[0]][pos[1]] = 2
-    try:
+    # show(tmp_maze)
+    print(pos,end=' ')
+    if pos[0] + direction[0] != 0 and pos[0] + direction[0] != 10 and pos[1] + direction[1] != 0 and pos[1] + direction[1] != 10:
         tmp_maze[pos[0] + direction[0] * 2][pos[1] + direction[1] * 2] = 5
-    except:
-        pass
-    try:
+    if pos[0] + left()[0] != 0 and pos[0] + left()[0] != 10 and pos[1] + left()[1] != 0 and pos[1] + left()[1] != 10:
         tmp_maze[pos[0] + left()[0] * 2][pos[1] + left()[1] * 2] = 6
-    except:
-        pass
-    try:
+    if pos[0] + right()[0] != 0 and pos[0] + right()[0] != 10 and pos[1] + right()[1] != 0 and pos[1] + right()[1] != 10:
         tmp_maze[pos[0] + right()[0] * 2][pos[1] + right()[1] * 2] = 7
-    except:
-        pass
-    try:
+    if pos[0] + back()[0] != 0 and pos[0] + back()[0] != 10 and pos[1] + back()[1] != 0 and pos[1] + back()[1] != 10:
         tmp_maze[pos[0] + back()[0] * 2][pos[1] + back()[1] * 2] = 8
-    except:
-        pass
-
 
 # ham check phia truoc, trai, phai co phai duong khong
 def check_wall():
@@ -122,8 +109,9 @@ def process(way):
         if i == 'r':
             direction = right()
         update_tmp_maze()
-        print('\n' * 10)
-        show(tmp_maze)
+        print(i)
+        # print('\n' * 10)
+        # show(tmp_maze)
 
 
 # dieu khien robot chay
@@ -135,10 +123,10 @@ def go(road):
         road += 'f'
         return True, road
     if l:
-        road += name[1]+'f'
+        road += name[1] + 'f'
         return True, road
     if r:
-        road += name[2]+'f'
+        road += name[2] + 'f'
         return True, road
     wall = check_wall()
     for i in np.random.choice(3, 3, False):
@@ -149,6 +137,7 @@ def go(road):
     process(come_back(road))
     return False, None
 
+
 global pos, direction, tmp_maze
 pos = np.argwhere(maze == 2)[0]
 end = np.argwhere(maze == 3)[0]
@@ -156,10 +145,8 @@ treasure = np.argwhere(maze == 4)
 name = ['', 'l', 'r', 'rr']
 direction = np.array([-1, 0])
 tmp_maze = maze
-update_tmp_maze()
-show(tmp_maze)
-
-wall = np.append(check_wall(),maze[pos[0] + back()[0]][pos[1] + back()[1]] == -1)
+show(maze)
+wall = np.append(check_wall(), maze[pos[0] + back()[0]][pos[1] + back()[1]] == -1)
 
 if any(check_out()):
     exit()
@@ -171,3 +158,11 @@ for i in np.random.choice(4, 4, False):
         if t1 == True:
             print(t2)
             break
+
+# tmp_maze=maze
+# for i in t2:
+#     process(i)
+#     print('\n' * 10)
+#     show(tmp_maze)
+
+
