@@ -1,13 +1,6 @@
-from generate import maze,show
+from generate import maze, show
 import numpy as np
 
-global pos, direction,tmp_maze
-pos = np.argwhere(maze == 2)[0]
-end = np.argwhere(maze == 3)[0]
-treasure = np.argwhere(maze == 4)
-name = ['f', 'l', 'r', 'b']
-direction = np.array([-1, 0])
-tmp_maze=maze
 
 # ham xac dinh toa do ben trai
 def left():
@@ -29,7 +22,7 @@ def right():
         return np.array([1, 0])
     if all(direction == [1, 0]):
         return np.array([0, -1])
-    if all(direction == [0, 1]):
+    if all(direction == [0, -1]):
         return np.array([-1, 0])
 
 
@@ -58,6 +51,49 @@ def come_back(road):
     return way
 
 
+# cap nhat gia tri maze cho tmp_maze
+def update_maze_to_tmp_maze():
+    global tmp_maze
+    tmp_maze[pos[0]][pos[1]] = '0'
+    if 
+        tmp_maze[pos[0] + direction[0] * 2][pos[1] + direction[1] * 2] = 0
+    except:
+        pass
+    try:
+        tmp_maze[pos[0] + left()[0] * 2][pos[1] + left()[1] * 2] = 0
+    except:
+        pass
+    try:
+        tmp_maze[pos[0] + right()[0] * 2][pos[1] + right()[1] * 2] = 0
+    except:
+        pass
+    try:
+        tmp_maze[pos[0] + back()[0] * 2][pos[1] + back()[1] * 2] = 0
+    except:
+        pass
+
+# cap nhat gia tri moi cho tmp_maze
+def update_tmp_maze():
+    global tmp_maze
+    tmp_maze[pos[0]][pos[1]] = 2
+    try:
+        tmp_maze[pos[0] + direction[0] * 2][pos[1] + direction[1] * 2] = 5
+    except:
+        pass
+    try:
+        tmp_maze[pos[0] + left()[0] * 2][pos[1] + left()[1] * 2] = 6
+    except:
+        pass
+    try:
+        tmp_maze[pos[0] + right()[0] * 2][pos[1] + right()[1] * 2] = 7
+    except:
+        pass
+    try:
+        tmp_maze[pos[0] + back()[0] * 2][pos[1] + back()[1] * 2] = 8
+    except:
+        pass
+
+
 # ham check phia truoc, trai, phai co phai duong khong
 def check_wall():
     return np.array([maze[pos[0] + direction[0]][pos[1] + direction[1]], maze[pos[0] + left()[0]][pos[1] + left()[1]],
@@ -76,57 +112,62 @@ def check_out():
 
 # ham thuc hien viec di chuyen
 def process(way):
-    global pos, direction,tmp_maze
+    global pos, direction, tmp_maze
     for i in way:
+        update_maze_to_tmp_maze()
         if i == 'f':
-            tmp_maze[pos[0]][pos[1]]=maze[pos[0]][pos[1]]
             pos += direction * 2
-            tmp_maze[pos[0]][pos[1]]=4
         if i == 'l':
             direction = left()
         if i == 'r':
             direction = right()
+        update_tmp_maze()
+        print('\n' * 10)
+        show(tmp_maze)
 
 
 # dieu khien robot chay
 def go(road):
     global pos
-    process('g')
-
-    road += name[0]
+    process(road)
     f, l, r = check_out()
     if f:
-        road += name[0]
+        road += 'f'
         return True, road
     if l:
-        road += name[1]
+        road += name[1]+'f'
         return True, road
     if r:
-        road += name[2]
+        road += name[2]+'f'
         return True, road
     wall = check_wall()
     for i in np.random.choice(3, 3, False):
-        if wall[i]:
-            t1, t2 = go([name[wall[i]]])
+        if not wall[i]:
+            t1, t2 = go(name[i] + 'f')
             if t1 == True:
                 return True, road + t2
     process(come_back(road))
     return False, None
 
+global pos, direction, tmp_maze
+pos = np.argwhere(maze == 2)[0]
+end = np.argwhere(maze == 3)[0]
+treasure = np.argwhere(maze == 4)
+name = ['', 'l', 'r', 'rr']
+direction = np.array([-1, 0])
+tmp_maze = maze
+update_tmp_maze()
+show(tmp_maze)
 
-wall = np.array(
-    [maze[pos[0] + direction[0]][pos[1] + direction[1]], maze[pos[0] + left()[0]][pos[1] + left()[1]], maze[pos[0]
-                                                                                                            + right()[
-                                                                                                                0]][
-        pos[1] + right()[1]], maze[pos[0] + back()[0]][pos[1] + back()[1]]]) == -1
+wall = np.append(check_wall(),maze[pos[0] + back()[0]][pos[1] + back()[1]] == -1)
+
+if any(check_out()):
+    exit()
 
 for i in np.random.choice(4, 4, False):
     if not wall[i]:
-        if i==0:
-            tmp=''
-        if i==3:
-            tmp='rr'
-        t1, t2 = go(name[wall[i]])
+        tmp = name[i] + 'f'
+        t1, t2 = go(tmp)
         if t1 == True:
             print(t2)
             break
