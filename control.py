@@ -41,15 +41,15 @@ def back():
 
 # ham de tao ra con duong di nguoc lai dua tren con duong da co
 def come_back(road):
-    way = 'll'+road[::-1]
-    # for i in road[::-1]:
-    #     if i == 'f':
-    #         way += 'f';
-    #     if i == 'l':
-    #         way += 'r'
-    #     if i == 'r':
-    #         way += 'l'
-    return  'll'+road[::-1]
+    way = ''
+    for i in road[::-1]:
+        if i == 'f':
+            way += 'b'
+        if i == 'l':
+            way += 'r'
+        if i == 'r':
+            way += 'l'
+    return  way
 
 
 # cap nhat gia tri maze cho tmp_maze
@@ -71,7 +71,15 @@ def update_tmp_maze():
     global tmp_maze
     tmp_maze[pos[0]][pos[1]] = 2
     # show(tmp_maze)
-    print(pos,end=' ')
+    if all(direction == [-1, 0]):
+        tmp='up'
+    if all(direction == [0, -1]):
+        tmp='left'
+    if all(direction == [1, 0]):
+        tmp='down'
+    if all(direction == [0, 1]):
+        tmp='right'
+    print(pos,tmp)
     if pos[0] + direction[0] != 0 and pos[0] + direction[0] != 10 and pos[1] + direction[1] != 0 and pos[1] + direction[1] != 10:
         tmp_maze[pos[0] + direction[0] * 2][pos[1] + direction[1] * 2] = 5
     if pos[0] + left()[0] != 0 and pos[0] + left()[0] != 10 and pos[1] + left()[1] != 0 and pos[1] + left()[1] != 10:
@@ -101,15 +109,18 @@ def check_out():
 def process(way):
     global pos, direction, tmp_maze
     for i in way:
+        print(i,end=' ')
         update_maze_to_tmp_maze()
         if i == 'f':
             pos += direction * 2
-        if i == 'l':
+        elif i == 'l':
             direction = left()
-        if i == 'r':
+        elif i == 'r':
             direction = right()
+        elif i=='b':
+            pos-=direction * 2
         update_tmp_maze()
-        print(i)
+
         # print('\n' * 10)
         # show(tmp_maze)
 
@@ -134,7 +145,9 @@ def go(road):
             t1, t2 = go(name[i] + 'f')
             if t1 == True:
                 return True, road + t2
+    print('Come back '+come_back(road))
     process(come_back(road))
+    print('End come back')
     return False, None
 
 
