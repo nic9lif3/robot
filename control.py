@@ -1,7 +1,8 @@
 from generate import maze, show
 import numpy as np
 import time
-
+from matplotlib.animation import FuncAnimation
+import matplotlib.pyplot as plt
 
 # ham xac dinh toa do ben trai
 def left():
@@ -58,18 +59,18 @@ def update_maze_to_tmp_maze():
     tmp_maze[pos[0]][pos[1]] = '0'
     if pos[0] + direction[0] != 0 and pos[0] + direction[0] != 10 and pos[1] + direction[1] != 0 and pos[1] + direction[1] != 10:
         tmp_maze[pos[0] + direction[0] * 2][pos[1] + direction[1] * 2] = 0
-    if pos[0] + left()[0] != 0 and pos[0] + left()[0] != 10 and pos[1] + left()[1] != 0 and pos[1] + left()[1] != 10:
-        tmp_maze[pos[0] + left()[0] * 2][pos[1] + left()[1] * 2] = 0
-    if pos[0] + right()[0] != 0 and pos[0] + right()[0] != 10 and pos[1] + right()[1] != 0 and pos[1] + right()[1] != 10:
-        tmp_maze[pos[0] + right()[0] * 2][pos[1] + right()[1] * 2] = 0
-    if pos[0] + back()[0] != 0 and pos[0] + back()[0] != 10 and pos[1] + back()[1] != 0 and pos[1] + back()[1] != 10:
-        tmp_maze[pos[0] + back()[0] * 2][pos[1] + back()[1] * 2] = 0
+    # if pos[0] + left()[0] != 0 and pos[0] + left()[0] != 10 and pos[1] + left()[1] != 0 and pos[1] + left()[1] != 10:
+    #     tmp_maze[pos[0] + left()[0] * 2][pos[1] + left()[1] * 2] = 0
+    # if pos[0] + right()[0] != 0 and pos[0] + right()[0] != 10 and pos[1] + right()[1] != 0 and pos[1] + right()[1] != 10:
+    #     tmp_maze[pos[0] + right()[0] * 2][pos[1] + right()[1] * 2] = 0
+    # if pos[0] + back()[0] != 0 and pos[0] + back()[0] != 10 and pos[1] + back()[1] != 0 and pos[1] + back()[1] != 10:
+    #     tmp_maze[pos[0] + back()[0] * 2][pos[1] + back()[1] * 2] = 0
 
 
 # cap nhat gia tri moi cho tmp_maze
 def update_tmp_maze():
     global tmp_maze
-    tmp_maze[pos[0]][pos[1]] = 2
+    tmp_maze[pos[0]][pos[1]] = 9
     # show(tmp_maze)
     if all(direction == [-1, 0]):
         tmp='up'
@@ -82,12 +83,12 @@ def update_tmp_maze():
     print(pos,tmp)
     if pos[0] + direction[0] != 0 and pos[0] + direction[0] != 10 and pos[1] + direction[1] != 0 and pos[1] + direction[1] != 10:
         tmp_maze[pos[0] + direction[0] * 2][pos[1] + direction[1] * 2] = 5
-    if pos[0] + left()[0] != 0 and pos[0] + left()[0] != 10 and pos[1] + left()[1] != 0 and pos[1] + left()[1] != 10:
-        tmp_maze[pos[0] + left()[0] * 2][pos[1] + left()[1] * 2] = 6
-    if pos[0] + right()[0] != 0 and pos[0] + right()[0] != 10 and pos[1] + right()[1] != 0 and pos[1] + right()[1] != 10:
-        tmp_maze[pos[0] + right()[0] * 2][pos[1] + right()[1] * 2] = 7
-    if pos[0] + back()[0] != 0 and pos[0] + back()[0] != 10 and pos[1] + back()[1] != 0 and pos[1] + back()[1] != 10:
-        tmp_maze[pos[0] + back()[0] * 2][pos[1] + back()[1] * 2] = 8
+    # if pos[0] + left()[0] != 0 and pos[0] + left()[0] != 10 and pos[1] + left()[1] != 0 and pos[1] + left()[1] != 10:
+    #     tmp_maze[pos[0] + left()[0] * 2][pos[1] + left()[1] * 2] = 6
+    # if pos[0] + right()[0] != 0 and pos[0] + right()[0] != 10 and pos[1] + right()[1] != 0 and pos[1] + right()[1] != 10:
+    #     tmp_maze[pos[0] + right()[0] * 2][pos[1] + right()[1] * 2] = 7
+    # if pos[0] + back()[0] != 0 and pos[0] + back()[0] != 10 and pos[1] + back()[1] != 0 and pos[1] + back()[1] != 10:
+    #     tmp_maze[pos[0] + back()[0] * 2][pos[1] + back()[1] * 2] = 8
 
 # ham check phia truoc, trai, phai co phai duong khong
 def check_wall():
@@ -107,7 +108,7 @@ def check_out():
 
 # ham thuc hien viec di chuyen
 def process(way):
-    global pos, direction, tmp_maze
+    global pos, direction, tmp_maze,all_step
     for i in way:
         print(i,end=' ')
         update_maze_to_tmp_maze()
@@ -120,7 +121,7 @@ def process(way):
         elif i=='b':
             pos-=direction * 2
         update_tmp_maze()
-
+        all_step+=i
         # print('\n' * 10)
         # show(tmp_maze)
 
@@ -135,9 +136,11 @@ def go(road):
         return True, road
     if l:
         road += name[1] + 'f'
+        process(name[1])
         return True, road
     if r:
         road += name[2] + 'f'
+        process(name[2])
         return True, road
     wall = check_wall()
     for i in np.random.choice(3, 3, False):
@@ -151,17 +154,19 @@ def go(road):
     return False, None
 
 
-global pos, direction, tmp_maze
-pos = np.argwhere(maze == 2)[0]
+global pos, direction, tmp_maze,all_step,imagine_maze
+all_step=''
+imagine_maze=np.zeros(21,21)
+
+pos = np.argwhere(maze == 9)[0]
 end = np.argwhere(maze == 3)[0]
-treasure = np.argwhere(maze == 4)
 name = ['', 'l', 'r', 'rr']
 direction = np.array([-1, 0])
-tmp_maze = maze
+tmp_maze = np.array(maze)
 show(maze)
 wall = np.append(check_wall(), maze[pos[0] + back()[0]][pos[1] + back()[1]] == -1)
 
-if any(check_out()):
+if any(np.append(check_out(),maze[pos[0] + back()[0]][pos[1] + back()[1]] == 3)):
     exit()
 
 for i in np.random.choice(4, 4, False):
@@ -172,10 +177,20 @@ for i in np.random.choice(4, 4, False):
             print(t2)
             break
 
-# tmp_maze=maze
-# for i in t2:
-#     process(i)
-#     print('\n' * 10)
-#     show(tmp_maze)
+tmp_maze=maze
+pos = np.argwhere(maze == 9)[0]
+direction = np.array([-1, 0])
+fig, ax = plt.subplots(figsize=(5, 8))
 
+def update(i):
+    process(all_step[i])
+    ax.imshow(tmp_maze*5)
+    ax.set_title("Step: {}/{}".format(i,len(all_step)), fontsize=20)
+    ax.set_axis_off()
+
+def init():
+    pass
+anim = FuncAnimation(fig, update, frames=range(len(all_step)), interval=800,init_func=init)
+anim.save('step.gif', dpi=80, writer='imagemagick')
+plt.close()
 

@@ -16,7 +16,7 @@ def generate():
     start = np.random.choice(range(1, 10, 2), 2)
     # chon kho bau:
     # chon diem bat dau
-    maze[start[0]][start[1]] = 2
+    maze[start[0]][start[1]] = 9
     # chon diem ket thuc
     end = np.zeros(2)
     end = np.random.choice([0, 1, 3, 5, 7, 9, 10], 2)
@@ -33,7 +33,7 @@ def generate():
 
 
 def test(maze):
-    start = np.argwhere(maze == 2)[0]
+    start = np.argwhere(maze == 9)[0]
     end = np.argwhere(maze == 3)[0]
     if end[0] == end[1] or abs(end[0] - end[1]) == 10:
         return False
@@ -76,7 +76,7 @@ def show(maze):
                     tmp = '-'
                 if i % 2 == 0:
                     tmp = '|'
-            elif maze[i][j] == 2:
+            elif maze[i][j] == 9:
                 tmp = 'i'
             elif maze[i][j] == 3:
                 tmp = 'o'
