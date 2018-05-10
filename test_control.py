@@ -122,9 +122,6 @@ def process(way):
             pos-=direction * 2
         update_tmp_maze()
         all_step+=i
-        # print('\n' * 10)
-        # show(tmp_maze)
-
 
 # dieu khien robot chay
 def go(road):
@@ -156,8 +153,7 @@ def go(road):
 
 global pos, direction, tmp_maze,all_step,imagine_maze
 all_step=''
-imagine_maze=np.zeros(21,21)
-
+imagine_maze=np.zeros((21,21))
 pos = np.argwhere(maze == 9)[0]
 end = np.argwhere(maze == 3)[0]
 name = ['', 'l', 'r', 'rr']
@@ -185,12 +181,12 @@ fig, ax = plt.subplots(figsize=(5, 8))
 def update(i):
     process(all_step[i])
     ax.imshow(tmp_maze*5)
-    ax.set_title("Step: {}/{}".format(i,len(all_step)), fontsize=20)
+    ax.set_title("Step: {}".format(i), fontsize=20)
     ax.set_axis_off()
 
 def init():
     pass
 anim = FuncAnimation(fig, update, frames=range(len(all_step)), interval=800,init_func=init)
-anim.save('step.gif', dpi=80, writer='imagemagick')
+anim.save('step.gif', dpi=80)
 plt.close()
 
