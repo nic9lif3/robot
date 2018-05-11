@@ -148,8 +148,8 @@ def go(road):
     for i in np.random.choice(3, 3, False):
         if not wall[i]:
             process(name[i])
-            if check_if_pass():
-                print('Come back ' + come_back(road))
+            if check_if_pass() and i==0:
+                print('Come back because pass' + come_back(road))
                 process(come_back(name[i]))
                 print('End come back')
                 continue
