@@ -149,11 +149,13 @@ def go(road):
         if not wall[i]:
             process(name[i])
             if check_if_pass():
+                print('Come back ' + come_back(road))
                 process(come_back(name[i]))
+                print('End come back')
                 continue
             t1, t2 = go('f')
             if t1 == True:
-                return True, road + t2
+                return True, road +name[i]+ t2
     print('Come back '+come_back(road))
     process(come_back(road))
     print('End come back')
