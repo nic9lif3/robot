@@ -190,16 +190,16 @@ for i in np.random.choice(4, 4, False):
             print(t2)
             break
 
-fig, ax = plt.subplots(figsize=(5, 8))
+# fig, ax = plt.subplots(figsize=(5, 8))
+#
+# def update(i):
+#     process(all_step[i])
+#     ax.imshow(tmp_maze*5)
+#     ax.set_title("Step: {}".format(i), fontsize=20)
+#     ax.set_axis_off()
 
-def update(i):
-    process(all_step[i])
-    ax.imshow(tmp_maze*5)
-    ax.set_title("Step: {}".format(i), fontsize=20)
-    ax.set_axis_off()
 
-
-anim = FuncAnimation(fig, update, frames=range(len(all_step)), interval=800,init_func=init)
-anim.save('step.gif', dpi=80)
-plt.close()
+# anim = FuncAnimation(fig, update, frames=range(len(all_step)), interval=800,init_func=init)
+# anim.save('step.gif', dpi=80)
+# plt.close()
 
