@@ -100,8 +100,7 @@ def show_pos():
 
 # ham check phia truoc, trai, phai co phai loi ra khong
 def check_out():
-    return np.array([maze[pos[0] + direction[0]][pos[1] + direction[1]], maze[pos[0] + left()[0]][pos[1] + left()[1]],
-                     maze[pos[0] + right()[0]][pos[1] + right()[1]]]) == 3
+    return maze[pos] == 4
 
 def check_if_pass():
     return imagine_maze[pos_imagine[0] + direction[0]][pos_imagine[1] + direction[1]]==-1
@@ -109,8 +108,7 @@ def check_if_pass():
 # phia truoc, ben trai, ben phai
 
 # ham thuc hien viec di chuyen
-def process(way):
-    global pos, direction, tmp_maze,all_step,pos_imagine
+def process(way,maze,pos):
     for i in way:
         print(str(i),end=' ')
         update_maze_to_tmp_maze()
@@ -126,24 +124,12 @@ def process(way):
             pos-=direction * 2
         show_pos()
         update_tmp_maze()
-        all_step+=i
 
 # dieu khien robot chay
-def go(road):
-    global pos
+def go(road,maze,pos):
     process(road)
-    f, l, r = check_out()
-    if f:
-        road += 'f'
-        return True, road
-    if l:
-        road += name[1] + 'f'
-        process(name[1])
-        return True, road
-    if r:
-        road += name[2] + 'f'
-        process(name[2])
-        return True, road
+    if check_out():
+        return True,''
     wall = check_wall()
     for i in np.random.choice(3, 3, False):
         if not wall[i]:
@@ -153,12 +139,9 @@ def go(road):
                 process(come_back(name[i]))
                 print('End come back')
                 continue
-            t1, t2 = go('f')
+            t1,t2 = go('f',maze,pos)
             if t1 == True:
                 return True, road +name[i]+ t2
-    print('Come back '+come_back(road))
-    process(come_back(road))
-    print('End come back')
     return False, None
 
 def init():
@@ -171,12 +154,12 @@ def init():
 
 
 
-global pos, direction, tmp_maze,all_step,imagine_maze,pos_imagine
 all_step=''
 init()
 show(maze)
 show_pos()
 name = ['', 'l', 'r', 'rr']
+start=np.argwhere(maze==2)[0]
 wall = np.append(check_wall(), maze[pos[0] + back()[0]][pos[1] + back()[1]] == -1)
 
 if any(np.append(check_out(),maze[pos[0] + back()[0]][pos[1] + back()[1]] == 3)):
@@ -185,7 +168,7 @@ if any(np.append(check_out(),maze[pos[0] + back()[0]][pos[1] + back()[1]] == 3))
 for i in np.random.choice(4, 4, False):
     if not wall[i]:
         tmp = name[i] + 'f'
-        t1, t2 = go(tmp)
+        t1, t2 = go(tmp,tmp_maze,start)
         if t1 == True:
             print(t2)
             break

@@ -3,31 +3,39 @@ import numpy as np
 
 def generate():
     maze = np.zeros((11, 11)) - 2
-    # chon cac duong noi giua cac o
-    maze[1:10:2, 2:9:2] = 1
-    maze[2:9:2, 1:10:2] = 1
-    # chon o co the di
-    maze[1:10:2, 1:10:2] = 0
     # chon bo tuong bao
     maze[0, :] = -1
     maze[10, :] = -1
     maze[:, 0] = -1
     maze[:, 10] = -1
-    start = np.random.choice(range(1, 10, 2), 2)
-    # chon kho bau:
+
+    # chon o co the di
+    maze[1:10:2, 1:10:2] = 0
+
+    # chon cac duong noi giua cac o
+    maze[1:10:2, 2:9:2] = 1
+    maze[2:9:2, 1:10:2] = 1
+
+    tmp = np.random.choice(range(1, 10, 2), (5, 2))
     # chon diem bat dau
-    maze[start[0]][start[1]] = 9
+    start = tmp[0]
+    maze[start[0]][start[1]] = 2
+
+    # chon kho bau:
+    treasure = tmp[1:4]
+    for x in treasure:
+        maze[x[0]][x[1]] = 3
     # chon diem ket thuc
-    end = np.zeros(2)
-    end = np.random.choice([0, 1, 3, 5, 7, 9, 10], 2)
+    end = tmp[4]
     door = np.random.randint(2)
-    end[door] = np.random.choice([0, 10])
+    end[door] = np.random.choice([1, 9])
+    maze[end[0]][end[1]] = 4
+
     # chon tuong chan
     a = np.argwhere(maze == 1)
-    inwall = np.random.choice(a.shape[0], 8)
+    inwall = np.random.choice(a.shape[0], 10)
     for x in inwall:
         maze[a[x][0]][a[x][1]] = -1
-    maze[end[0]][end[1]] = 3
 
     return maze
 
@@ -35,27 +43,10 @@ def generate():
 def test(maze):
     start = np.argwhere(maze == 9)[0]
     end = np.argwhere(maze == 3)[0]
-    if end[0] == end[1] or abs(end[0] - end[1]) == 10:
+    if maze[end[0]][end[1] - 1] + maze[end[0]][end[1] + 1] + maze[end[0] + 1][end[1]] + maze[end[0] - 1][end[1]] == -4:
         return False
-    else:
-        if end[0] == 0:
-            end[0] += 1
-            if maze[end[0]][end[1] - 1] + maze[end[0] + 1][end[1]] + maze[end[0]][end[1] + 1] == -3:
-                return False
-        if end[0] == 10:
-            end[0] -= 1
-            if maze[end[0]][end[1] - 1] + maze[end[0] - 1][end[1]] + maze[end[0]][end[1] + 1] == -3:
-                return False
-        if end[1] == 0:
-            end[1] += 1
-            if maze[end[0] + 1][end[1]] + maze[end[0] - 1][end[1]] + maze[end[0]][end[1] + 1] == -3:
-                return False
-        if end[1] == 10:
-            end[1] -= 1
-            if maze[end[0]][end[1] - 1] + maze[end[0] - 1][end[1]] + maze[end[0] + 1][end[1]] == -3:
-                return False
-    if maze[start[0] - 1][start[1]] + maze[start[0]][start[1] - 1] + maze[start[0] + 1][start[1]] + maze[start[0]][
-        start[1] + 1] == -4:
+    if maze[start[0]][start[1] - 1] + maze[start[0]][start[1] + 1] + maze[start[0] + 1][start[1]] + maze[start[0] - 1][
+        start[1]] == -4:
         return False
     return True
 
@@ -89,7 +80,7 @@ def show(maze):
             # right
             elif maze[i][j] == 7:
                 tmp = 'r'
-            #back
+            # back
             elif maze[i][j] == 8:
                 tmp = 'b'
             print(tmp, end='')
