@@ -129,7 +129,7 @@ def process(way):
         all_step+=i
 
 # dieu khien robot chay
-def go(road):
+def go1(road):
     global pos
     process(road)
     f, l, r = check_out()
@@ -153,7 +153,7 @@ def go(road):
                 process(come_back(name[i]))
                 print('End come back')
                 continue
-            t1, t2 = go('f')
+            t1, t2 = go1('f')
             if t1 == True:
                 return True, road +name[i]+ t2
     print('Come back '+come_back(road))
@@ -185,7 +185,7 @@ if any(np.append(check_out(),maze[pos[0] + back()[0]][pos[1] + back()[1]] == 3))
 for i in np.random.choice(4, 4, False):
     if not wall[i]:
         tmp = name[i] + 'f'
-        t1, t2 = go(tmp)
+        t1, t2 = go1(tmp)
         if t1 == True:
             print(t2)
             break
